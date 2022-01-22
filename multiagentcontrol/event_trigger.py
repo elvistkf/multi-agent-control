@@ -1,25 +1,44 @@
 import numpy as np
 import scipy.optimize
-import math
 from .agents import BaseAgent
 
 class EventTrigger():
+    """Base class for event-triggers
+    """
     def __init__(self):
         pass
     
-    def trigger_function(self, agent: BaseAgent):
+    def trigger_function(self, agent: BaseAgent) -> bool:
+        """Determine if the agent should trigger
+
+        Args:
+            agent (BaseAgent): agent in consideration
+
+        Returns:
+            bool: whether or not to trigger
+        """
         return NotImplementedError
 
 class RandomTrigger(EventTrigger):
-    def trigger_function(self, agent: BaseAgent):
-        return np.random.binomial(1, 0.5)
+    """Randomised triggering law
+    """
+    def __init__(self, p: float = 0.5):
+        """Initialise the random trigger
+
+        Args:
+            p (float, optional): probability of triggering. Defaults to 0.5.
+        """
+        self.prob = p
+        
+    def trigger_function(self, agent: BaseAgent) -> int:
+        return np.random.binomial(1, self.prob)
 
 class DeterministicEventTrigger(EventTrigger):
     def __init__(self, beta = 0.1, offset = 0):
         self.beta = beta
         self.offset = offset
 
-    def trigger_function(self, agent: BaseAgent):
+    def trigger_function(self, agent: BaseAgent) -> bool:
         e_norm = np.linalg.norm(agent.get_state() - agent.get_external_state())
         threshold = 0
         degree = agent.get_degree()
@@ -31,7 +50,6 @@ class DeterministicEventTrigger(EventTrigger):
         threshold += e_norm ** 2
 
         return threshold > self.offset
-
 
 class StochasticEventTrigger(EventTrigger):
     def __init__(self, rand_min = 0.05, rand_dist = 'uniform', opt_lambda = 1, opt_q = 1, beta = 0.1, kappa = 1.05, decay: callable = lambda t: 1):
@@ -57,9 +75,8 @@ class StochasticEventTrigger(EventTrigger):
                 mu = scipy.optimize.broyden1(F, np.exp(-self.theta))
                 self.rand_alpha = ((1-a)/self.theta-1)*((mu-a)/(1-a))
                 self.rand_beta = ((1-a)/self.theta-1)*((1-mu)/(1-a))
-                # print(mu, self.theta, self.rand_alpha, self.rand_beta)
 
-    def distribution(self):
+    def distribution(self) -> float:
         a = self.rand_min
         
         if self.rand_dist == 'uniform':
@@ -72,9 +89,8 @@ class StochasticEventTrigger(EventTrigger):
                 return (1-a) * np.random.binomial(1, p) + a
             else:
                 return (1-a) * np.random.beta(a=self.rand_alpha, b=self.rand_beta) + a
-
-
-    def trigger_function(self, agent: BaseAgent):
+        
+    def trigger_function(self, agent: BaseAgent) -> bool:
         rand_var = self.distribution()
         e_norm = np.linalg.norm(agent.get_state() - agent.get_external_state())
         threshold = 0
@@ -85,7 +101,6 @@ class StochasticEventTrigger(EventTrigger):
             threshold += -weight * (np.linalg.norm(neighbour.get_external_state() - agent.get_external_state())) ** 2
         threshold *= self.beta / degree
         threshold += e_norm ** 2
-        # decay = self.decay_max * np.exp(-self.decay_rate * agent.get_time()) + self.decay_min
         decay = self.decay(agent.get_time())
         
         if decay > 1e-30:
@@ -94,12 +109,12 @@ class StochasticEventTrigger(EventTrigger):
             return threshold > 0
             
 class SelfTrigger(EventTrigger):
-    def __init__(self, decay_coefficient=5, decay_rate = 5, decay_min = 0.0001):
+    def __init__(self, decay_coefficient = 5, decay_rate = 5, decay_min = 0.0001):
         self.decay_rate = decay_rate
         self.decay_min = decay_min
         self.decay_coefficient = decay_coefficient
 
-    def trigger_function(self, agent: BaseAgent):
+    def trigger_function(self, agent: BaseAgent) -> bool:
         e_norm = np.linalg.norm(agent.get_state() - agent.get_external_state())
         decay = self.decay_coefficient * np.exp(-self.decay_rate * agent.get_time()) + self.decay_min
         return e_norm ** 2 > decay
@@ -109,13 +124,12 @@ class StochasticSelfTrigger(EventTrigger):
         self.kappa = kappa
         self.decay = decay
         self.rand_min = rand_min
-        self.rand_dist = rand_dist
 
-    def distribution(self):
+    def distribution(self) -> float:
         a = self.rand_min
         return np.random.uniform(a, 1)
 
-    def trigger_function(self, agent: BaseAgent):
+    def trigger_function(self, agent: BaseAgent) -> bool:
         rand_var = self.distribution()
         e_norm = np.linalg.norm(agent.get_state() - agent.get_external_state())
         threshold = 0
@@ -135,15 +149,6 @@ class StochasticSelfTrigger(EventTrigger):
             return threshold > 0
 
 class DynamicEventTrigger(EventTrigger):
-    # -- backup --
-    # def __init__(self, beta = 1.5, sigma = 0.35, delta = 0.5, chi0 = 0.5, theta = 2):
-    #     self.beta = beta
-    #     self.sigma = sigma
-    #     self.delta = delta
-    #     self.chi = chi0
-    #     self.theta = theta
-    # -- backup --
-
     def __init__(self, beta = 1.5, sigma = 0.4, delta = 0.5, chi0 = 0.5, theta = 2):
         self.beta = beta
         self.sigma = sigma
@@ -151,7 +156,7 @@ class DynamicEventTrigger(EventTrigger):
         self.chi = chi0
         self.theta = theta
 
-    def trigger_function(self, agent: BaseAgent):
+    def trigger_function(self, agent: BaseAgent) -> bool:
         e_norm = np.linalg.norm(agent.get_state() - agent.get_external_state())
         threshold = 0
         degree = agent.get_degree()
@@ -166,12 +171,17 @@ class DynamicEventTrigger(EventTrigger):
         return self.theta * (degree * (e_norm ** 2) - threshold) >= self.chi
 
 class TimeTrigger(EventTrigger):
-    def __init__(self, period = 5):
+    """Periodic time-based triggering law
+    """
+    def __init__(self, period: int = 5):
+        """Initialise the trigger
+
+        Args:
+            period (int, optional): period of triggering in terms of time steps. Defaults to 5.
+        """
         self.period = period
         self.k = 0
 
-    def trigger_function(self, agent: BaseAgent):
+    def trigger_function(self, agent: BaseAgent) -> bool:
         self.k += 1
-        # ratio = time / self.period
-        # return abs(int(ratio) - ratio) < self.period
         return self.k % self.period == 0

@@ -316,11 +316,21 @@ class BaseAgent():
         return calculate_hessian(self.objective, self.x)
 
 class SingleIntegratorAgent(BaseAgent):
+    """Single integrator agent with dynamics:
+        
+        dx/dt = u,
+        y = x
+    """
     def estimate(self):
         self.y = np.copy(self.x)
         self.xh = np.copy(self.y)
 
     def dynamics(self):
+        """Dynamics of the single integrator agent
+
+        Raises:
+            ValueError: Control input u does not match the state dimension
+        """
         if length(self.u) != self.state_dim:
             raise ValueError('Control input u does not match the state dimension')
         
@@ -399,6 +409,8 @@ class BaseLinearAgent(BaseAgent):
 
 
 class LinearContinuousAgent(BaseLinearAgent):
+    """Linear continuous time agent
+    """
     def dynamics(self):
         super().dynamics()
         dt = self.step_size
@@ -406,6 +418,8 @@ class LinearContinuousAgent(BaseLinearAgent):
         self.x += dx * dt
     
 class LinearDiscreteAgent(BaseLinearAgent):
+    """Linear discrete time agent
+    """
     def dynamics(self):
         super().dynamics()
         self.x = self.Ax + self.Bu

@@ -1,7 +1,7 @@
 import numpy as np
 import platform
 import matplotlib as mpl
-if platform.system() == 'Darwin':
+if platform.system() == 'Darwin':       # avoid bugs in some versions of matplotlib with macOS catalina
     mpl.use('Qt5Agg')
 import matplotlib.pyplot as plt
 from typing import Any, Callable, List
