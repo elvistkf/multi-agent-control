@@ -98,7 +98,7 @@ class ParallelEnv():
         Args:
             index (int, optional): figure index. Defaults to None.
             grid (bool, optional): display grid. Defaults to True.
-            loglog (bool, optional): loglog scale. Defaults to False.
+            loglog (bool, optional): log-log scale. Defaults to False.
             semilogy (bool, optional): semilog-y scale. Defaults to True.
             fill (bool, optional): fill the area between max-min range. Defaults to True.
             label (str, optional): figure label. Defaults to ''.
@@ -123,6 +123,27 @@ class ParallelEnv():
         return self.plot_data_mean(_t, _errs, index, grid, loglog = loglog, semilogy = semilogy, fill=fill, ylabel=r'$\varepsilon(t)$', label=label, color=color, zoom=zoom, fig=fig, ax1=ax1, ax_new=ax_new, zoom_xlim=zoom_xlim, zoom_ylim=zoom_ylim, zoom_pos=zoom_pos)
 
     def plot_communication_rate(self, index: int = None, grid: bool = True, fill: bool = True, label: str = '', color: str = None, xlim: tuple = None, ylim: tuple = None, zoom: bool = True, fig = None, ax1 = None, ax_new = None, zoom_xlim: tuple = None, zoom_ylim: tuple = None, zoom_pos: List[float] = [0.19, 0.495, 0.35, 0.35]):
+        """Plot the average communication rate 
+
+        Args:
+            index (int, optional): figure index. Defaults to None.
+            grid (bool, optional): display grid. Defaults to True.
+            fill (bool, optional): fill the area between max-min range. Defaults to True.
+            label (str, optional): figure label. Defaults to ''.
+            color (str, optional): plot colour. Defaults to None.
+            xlim (tuple, optional): range limit on x axis. Defaults to None.
+            ylim (tuple, optional): range limit on y axis. Defaults to None.
+            zoom (bool, optional): display zoomed view. Defaults to True.
+            fig ([type], optional): figure to superpose on. Defaults to None.
+            ax1 ([type], optional): axis to superpose on. Defaults to None.
+            ax_new ([type], optional): new axis. Defaults to None.
+            zoom_xlim (tuple, optional): range limit on x axis of the zoomed view. Defaults to None.
+            zoom_ylim (tuple, optional): range limit on y axis of the zoomed view. Defaults to None.
+            zoom_pos (List[float], optional): zoomed view position. Defaults to [0.19, 0.495, 0.35, 0.35].
+
+        Returns:
+            Any: figure, ax1, ax_new
+        """
         if index is None:
             index = self.__state_dim + 2
         _t = self.__envs[0].get_time()
@@ -139,7 +160,37 @@ class ParallelEnv():
         self.__envs[0].draw_graph(index)
 
     def plot_data_mean(self, x: np.array, y: np.array, index: int = 1, grid: bool = True, loglog: bool = False, semilogy: bool = False, fill: bool = True, xlabel: str = r'$t$', ylabel: str = '', label: str = '', title: str = '', color: str = None, allow_neg: bool = False, std_filter: bool = False, xlim: bool = None, ylim: bool = None, legend_loc: int = 1, zoom: bool = True, fig = None, ax1 = None, ax_new = None, zoom_xlim: tuple = None, zoom_ylim: tuple = None, zoom_pos: List[float] = None):
+        """Plot data with mean and max-min
 
+        Args:
+            x (np.array): data on the x-axis
+            y (np.array): data on the y-axis
+            index (int, optional): figure index. Defaults to 1.
+            grid (bool, optional): display grid. Defaults to True.
+            loglog (bool, optional): log-log scale. Defaults to False.
+            semilogy (bool, optional): semilog-y scale. Defaults to False.
+            fill (bool, optional): fill the area between max-min range. Defaults to True.
+            xlabel (str, optional): x-axis label. Defaults to r'$'.
+            ylabel (str, optional): y-axis label. Defaults to ''.
+            label (str, optional): figure label. Defaults to ''.
+            title (str, optional): figure title. Defaults to ''.
+            color (str, optional): plot color. Defaults to None.
+            allow_neg (bool, optional): allow negative number. Defaults to False.
+            std_filter (bool, optional): apply low pass filter to standard deviation. Defaults to False.
+            xlim (bool, optional): range limit on x axis. Defaults to None.
+            ylim (bool, optional): range limit on y axis. Defaults to None.
+            legend_loc (int, optional): legend location. Defaults to 1.
+            zoom (bool, optional): display zoomed view. Defaults to True.
+            fig ([type], optional): figure to superpose on. Defaults to None.
+            ax1 ([type], optional): axis to superpose on. Defaults to None.
+            ax_new ([type], optional): new axis. Defaults to None.
+            zoom_xlim (tuple, optional): range limit on x axis of the zoomed view. Defaults to None.
+            zoom_ylim (tuple, optional): range limit on y axis of the zoomed view. Defaults to None.
+            zoom_pos (List[float], optional): zoomed view position. Defaults to None.
+
+        Returns:
+            Any: figure, ax1, ax_new
+        """
         _t = x
         _data = y
         _data_mean = np.mean(_data, axis=0)

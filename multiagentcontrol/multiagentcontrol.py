@@ -253,22 +253,37 @@ class MultiagentControl():
                     ax_new.set_xlim([0, 0.4])
                     # ax_new.set_ylim(ylim)
 
-    def plot_consensus_error(self, index = None, loglog = False, semilogy = True, grid = True, label = '', color = None, xlim = None, ylim = None, zoom = True, fig = None, ax1 = None, ax_new = None, zoom_xlim = None, zoom_ylim = None, zoom_pos = [0.325, 0.65, 0.35, 0.225]):
+    def plot_consensus_error(self, index: int = None, loglog: bool = False, semilogy: bool = True, grid: bool = True, label: bool = '', color: str = None, xlim: tuple = None, ylim: tuple = None, zoom: bool = True, fig = None, ax1 = None, ax_new = None, zoom_xlim: tuple = None, zoom_ylim: tuple = None, zoom_pos: List[float] = [0.325, 0.65, 0.35, 0.225]):
+        """Plot the consensus error
+
+        Args:
+            index (int, optional): figure index. Defaults to None.
+            loglog (bool, optional): log-log scale. Defaults to False.
+            semilogy (bool, optional): semilog-y scale. Defaults to True.
+            grid (bool, optional): display grid. Defaults to True.
+            label (bool, optional): figure label. Defaults to ''.
+            color (str, optional): plot colour. Defaults to None.
+            xlim (tuple, optional): display limit on x axis. Defaults to None.
+            ylim (tuple, optional): display limit on y axis. Defaults to None.
+            zoom (bool, optional): display zoomed view. Defaults to True.
+            fig ([type], optional): figure to superpose on. Defaults to None.
+            ax1 ([type], optional): axis to superpose on. Defaults to None.
+            ax_new ([type], optional): new axis. Defaults to None.
+            zoom_xlim (tuple, optional): range limit on x axis of the zoomed view. Defaults to None.
+            zoom_ylim (tuple, optional): range limit on y axis of the zoomed view. Defaults to None.
+            zoom_pos (List[float], optional): zoomed view position. Defaults to [0.325, 0.65, 0.35, 0.225].
+
+        Returns:
+            Any: figure, ax1, ax_new
+        """
         if index is None:
             index = self.state_dim + 1
         _t = self.get_time()
         _err = self.get_consensus_error()
-        # fig = plt.figure(index)
-        # ax1 = fig.gca()
+
         if fig is None and ax1 is None:
             fig = plt.figure(index)
             ax1 = plt.subplot(1,1,1, label='ce')
-        # try:
-        #     ax1 = fig.axes[0]
-        # except IndexError:
-        #     ax1 = fig.axes
-        
-        # plot = plt.semilogy if semilogy else plt.plot
         if loglog:
             plot = ax1.loglog
         elif semilogy:
@@ -302,7 +317,6 @@ class MultiagentControl():
                 plot = ax_new.semilogy
             else:
                 plot = ax_new.plot
-            # plot = ax_new.plot
             if color != None:
                 plot(_t, _err, color=color)
             else:
@@ -318,7 +332,28 @@ class MultiagentControl():
         return fig, ax1, ax_new
         
 
-    def plot_communication_rate(self, index = None, grid = True, label = '', color = None, xlim = None, ylim = None, legend_loc = 1, zoom = True, fig = None, ax1 = None, ax_new = None, zoom_xlim = None, zoom_ylim = None, zoom_pos = [0.17, 0.65, 0.35, 0.225]):
+    def plot_communication_rate(self, index: int = None, grid: bool = True, label: str = '', color: str = None, xlim: tuple = None, ylim: tuple = None, legend_loc: int = 1, zoom: bool = True, fig = None, ax1 = None, ax_new = None, zoom_xlim: tuple = None, zoom_ylim: tuple = None, zoom_pos: List[float] = [0.17, 0.65, 0.35, 0.225]):
+        """Plot the average communication rate
+
+        Args:
+            index (int, optional): figure index. Defaults to None.
+            grid (bool, optional): display grid. Defaults to True.
+            label (str, optional): figure label. Defaults to ''.
+            color (str, optional): plot colour. Defaults to None.
+            xlim (tuple, optional): display limit on x axis. Defaults to None.
+            ylim (tuple, optional): display limit on y axis. Defaults to None.
+            legend_loc (int, optional): legend location. Defaults to 1.
+            zoom (bool, optional): display zoomed view. Defaults to True.
+            fig ([type], optional): figure to superpose on. Defaults to None.
+            ax1 ([type], optional): axis to superpose on. Defaults to None.
+            ax_new ([type], optional): new axis. Defaults to None.
+            zoom_xlim (tuple, optional): range limit on x axis of the zoomed view. Defaults to None.
+            zoom_ylim (tuple, optional): range limit on y axis of the zoomed view. Defaults to None.
+            zoom_pos (List[float], optional): zoomed view position. Defaults to [0.17, 0.65, 0.35, 0.225].
+
+        Returns:
+            Any: figure, ax1, ax_new
+        """
         if index is None:
             index = self.state_dim + 2
         _t = self.get_time()

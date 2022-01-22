@@ -1,15 +1,14 @@
-# multiagentcontrol
-Multiagentcontrol provides a framework for multi-agent control systems simulation, with support of CPU parallelisation to run multiple instances of multi-agent systems simultaneously.
+# MultiAgentControl 
+MultiAgentControl provides a framework for multi-agent control systems simulation, with support of CPU parallelisation to run multiple instances of multi-agent systems simultaneously.
 
-## Dependencies
-The following packages are required:
+# Requirements
 - numpy
 - scipy
 - matplotlib
 - networkx
 - pathos (only for parallelisation)
 
-## Installation
+# Installation
 Clone the repository to your computer
 
 ```
@@ -36,7 +35,7 @@ pip install .
 
 It is highly recommended to install the package inside a virtual environment via ``conda`` or ``venv``.
 
-## References
+# References
 This work is based on the following literature:
 
 [1] K. F. E. Tsang, J. Wu and L. Shi, "Distributed Optimisation with Stochastic Event-Triggered Multi-Agent Control Algorithm", *IEEE Conference on Decision and Control*, pp. 6222-6227, 2020.
