@@ -12,7 +12,7 @@ MultiAgentControl provides a framework for multi-agent control systems simulatio
 Clone the repository to your computer
 
 ```
-git clone https://github.com/elvistkf/multiagentcontrol.git
+git clone https://github.com/elvistkf/multi-agent-control.git
 ```
 
 Navigate into the cloned repository folder

@@ -9,11 +9,11 @@ setup(
     license='MIT',
     packages=['multiagentcontrol'],
     install_requires=[
-        '<matplotlib>',
-        '<numpy>',
-        '<scipy>',
-        '<networkx>',
-        '<pathos>'
+        'matplotlib',
+        'numpy',
+        'scipy',
+        'networkx',
+        'pathos'
     ],
     zip_safe=False
 )

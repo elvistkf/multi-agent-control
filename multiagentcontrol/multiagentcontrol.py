@@ -5,12 +5,11 @@ if platform.system() == 'Darwin':       # avoid bugs in some versions of matplot
     mpl.use('Qt5Agg')
 import matplotlib.pyplot as plt
 import networkx as nx
-
 from typing import Any, Callable, List, Union
 
-from .agents import BaseAgent, SingleIntegratorAgent, LinearContinuousAgent, LinearDiscreteAgent
-from .event_trigger import EventTrigger, DeterministicEventTrigger, StochasticEventTrigger, SelfTrigger
-from .common import is_scalar, is_integer, length, calculate_convex_optimal, calculate_gradient, calculate_hessian
+from .agents import BaseAgent, SingleIntegratorAgent
+from .event_trigger import EventTrigger
+from .common import length, calculate_convex_optimal
 
 class MultiagentControl():
     def __init__(self, num_agents: int, id: int = None, graph: nx.Graph = None, agents: List[BaseAgent] = None, agent_type: BaseAgent = SingleIntegratorAgent, state_dim: int = 1, init_state: List[List[float]] = None, step_size: float = 1.0):
